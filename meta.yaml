@@ -1,0 +1,90 @@
+#
+# This is how to do the build (and some other useful commands)
+#
+# To build requires access to the conda-forge, pytorchm and anaconda channels
+# can be used with --debug flag
+# conda build . -c pytorch -c conda-forge -c anaconda -c uncbiag
+#
+# After the package has build, copy it in your local directory (subdirectory osx64, for example).
+# Then index it with this command (needs to be run for each subdirectory / architecture: noarch, linux-64, osx-64):
+# conda index /Users/mn/PycharmProjects/tst_channel
+#
+# Once it is indexed it can be installed from there (ideally into a new, empty virtual environment as follows)
+# conda list env
+# conda activate [your_env] or conda create --name my_new_env pip python=3.7
+# conda install -vv -c file://Users/mn/PycharmProjects/tst_channel/ -c pytorch -c conda-forge -c anaconda -c uncbiag mermaid=0.2.0 
+# conda list
+#
+# Here are also some descriptions on how to host a private conda repository (as used above)
+# https://stackoverflow.com/questions/35359147/how-can-i-host-my-own-private-conda-repository
+#
+# to upload to the cloud
+# anaconda login
+# anaconda upload --user uncbiag mermaid-0.2.0-0.tar.bz2
+#
+# Combined with travis, to auto-create conda packages and upload them to the conda cloud, tag them.
+
+{% set name = "mermaid" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: {{ GIT_DESCRIBE_TAG }}
+
+source:
+  - git_url: .
+
+requirements:
+  build:
+    - python ==3.7
+    - setuptools
+    - pip
+
+  run:
+    - python ==3.7
+    - ipython
+    - jupyter
+    - ipykernel
+    - numpy >=1.17
+    - future
+    - termcolor
+    - cython
+    - scikit-image
+    - tabulate
+    - cffi
+    - itk
+    - pytorch >=1.7
+    - pynrrd
+    - torchvision
+    - pandas
+    - matplotlib
+    - scipy
+    - openpyxl
+    - sphinx-gallery ==0.3.1
+    - sphinx
+    - nbsphinx
+    - pandoc
+    - pypandoc
+    - graphviz
+    - statsmodels
+    - progressbar2
+
+test:
+  imports:
+    - mermaid
+
+about:
+  home: https://github.com/uncbiag/mermaid
+  license: BSD License
+  license_family: BSD
+  license_file: LICENSE
+  summary: 'Image registration toolbox in pyTorch'
+  description: 'This image registration toolbox provides various image registration algorithms (mostly non-parametric ones). It is written in pytorch allowing for easy prototyping of new approaches. To install include the conda-forge and the anaconda channels by executing: conda install -c pytorch -c conda-forge -c anaconda -c uncbiag mermaid'
+  doc_url: 'https://mermaid.readthedocs.io/en/latest/'
+  dev_url: 'https://github.com/uncbiag/mermaid'
+
+extra:
+  recipe-maintainers:
+    - marcniethammer
+    - rkwitt
+    - hbgtjxzbbx
+
